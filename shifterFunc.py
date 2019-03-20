@@ -6,6 +6,7 @@ import time
 import os
 import queue
 from threading import Thread
+from enum import Enum
 
 
 
@@ -27,10 +28,13 @@ except OSError:
 	
 	
 
+class shiftData(Enum):
+	UP = [0x09]
+    DOWN = [0x0A]
 	
-def upShift (bus):
+def shift (bus, upOrDown):
 
-	msg = can.Message(arbitration_id=0x148,data=[0x09],extended_id=False)
+	msg = can.Message(arbitration_id=0x148,data=upOrDown,extended_id=False)
 	bus.send(msg)
 	time.sleep(0.1)
 	
@@ -41,25 +45,16 @@ def upShift (bus):
 	
 	
 	
-def downShift (bus):
 
-	msg = can.Message(arbitration_id=0x148,data=[0x0A],extended_id=False)
-	bus.send(msg)
-	time.sleep(0.1)
-	
-	msg.data[0] = 0x05
-	bus.send(msg)
-	time.sleep(0.01)
-	return 
 	
 	
 try:
 
 	#sample of upshift and downshift every 2s
-	upShift (bus)
+	shift (bus,shiftData.UP)
 	time.sleep(2)
 	
-	downShift (bus)
+	shift (bus,shiftData.DOWN)
 	time.sleep(2)
 		
 	
